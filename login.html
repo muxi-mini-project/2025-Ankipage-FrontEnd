@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      width: 1701px;
+      height: 999px;
+      background: linear-gradient( 141deg, #E7F2FE 0%, #DBEDFF 17%, #CBE4FE 100%);
+      border-radius: 14px 14px 14px 14px;
+    }
+    .login-container {
+        position: absolute;
+        width: 1125px;
+        height: 669px;
+        background: #FFFFFF;
+        box-shadow: 36px 37px 34px 4px rgba(72,97,157,0.53);
+        border-radius: 20px 20px 20px 20px;
+    }
+   
+    .icon{
+        margin-top: 30px;
+        margin-left: 40px;
+        width: 100px;
+        height: 100px;
+    }
+    .name{
+        margin-top: 60px;
+        margin-left: 10px;
+        width: 127px;
+        height: 29px;
+        font-family: Inter, Inter;
+        font-weight: bold;
+        font-size: 22px;
+        color: #000000;
+        line-height: 26px;
+        text-align: left;
+        font-style: normal;
+        text-transform: none;
+    }
+    .title{
+        margin-top: 79px;
+        margin-left: 68px;
+        width: 503px;
+        height: 89px;
+        font-size: 36px;
+        font-family: Biryani-Regular, Biryani;
+        font-weight: 400;
+        color: #000000;
+        line-height: 93px;
+    }
+    .intoRegister{
+        margin-top: 12px;
+        margin-left: 256px;
+        width: 163px;
+        height: 18px;
+        font-size: 11px;
+        font-family: Inter-Medium, Inter;
+        font-weight: 500;
+        color: #545454;
+        line-height: 13px;
+    }
+    .have{
+/*字体样式*/
+font-size: 11px;
+font-family: Inter-Medium, Inter;
+font-weight: 500;
+line-height: 13px;
+    }
+    .into{
+/*字体样式*/
+font-size: 11px;
+font-family: Inter-Medium, Inter;
+font-weight: 500;
+line-height: 13px;
+    }
+    .box {
+/*位置*/
+margin-left: 72px;
+margin-top: 16px;
+width: 285px;
+height: 32px;
+
+/*样式*/
+background: #EBF5FF;
+border-radius: 16px 16px 16px 16px;
+
+/*透明度*/
+opacity: 1;
+    }
+    input{
+        margin-top: 4px;
+        margin-left: 46px;
+        width: 193px;
+        height: 21px;
+        font-size: 14px;
+        font-family: Inter-Medium, Inter;
+        font-weight: 500;
+        color: #A9A9A9;
+        line-height: 16px;
+        border: 0;
+        background:transparent;
+    }
+    button {
+        margin-left: 109px;
+        margin-top: 42px;
+        border: 0;
+        width: 196px;
+        height: 32px;
+        background: #0847E0;
+        box-shadow: 5px 13px 11px 1px rgba(8,71,224,0.26);
+        border-radius: 16px 16px 16px 16px;
+        opacity: 1;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .login{
+        width: 123px;
+        height: 18px;
+        font-size: 14px;
+        font-family: Inter-Regular, Inter;
+        font-weight: 400;
+        color: #FFFFFF;
+        line-height: 16px;
+        letter-spacing: 20px;
+    }
+  </style>
+</head>
+<body>
+    <div class="login-container">
+        
+            <img class="icon" src="images/icon16.png">
+            <span class="name">ANKIPAGE.</span>
+        
+        <div class="title">Welcome to ANKIPAGE.</div>
+        <form id="loginForm">
+            <div class="box"><img><input type="email" id="email" placeholder="Email" required /></div>
+            <div class="box"><img><input type="password" id="password" placeholder="Password" required /></div>
+            <div></div>
+            <div class="intoRegister"><span class="have">还没有账号，</span><span class="into"><a href="register.html">立即注册</a></span></div>
+
+
+          <button type="submit"><span class="login">登录</span></button>
+        </form>
+      </div>
+      <script src="login.js">
+
+      </script>
+</body>
+</html>

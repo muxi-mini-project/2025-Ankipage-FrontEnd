@@ -1,0 +1,43 @@
+{
+    "manifest_version":3,
+    "name":"chrome extension",
+    "version":"1.0",
+    "description":"A extension learning",
+    "icons":{
+        "128":"images/icon128.png",
+        "48":"images/icon48.png",
+        "16":"images/icon16.png"
+    },
+    "permissions": [
+        "activeTab",
+        "scripting",
+        "tabs",
+        "sidePanel",
+        "storage"
+    ],
+    "action":{
+        "default_icon":"images/icon16.png",
+    
+        "default_title": "Click to open panel"
+    },
+    "side_panel":{
+        "default_path":"sidepanel.html"
+    },
+    "background": {
+        "service_worker": "service_worker.js"
+    },
+    "web_accessible_resources": [
+        {
+            "resources": ["register.html", "register.js", "login.html","login.js","more.html", "more.js"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"],
+            "css": ["content.css"]
+        }
+    ]
+
+}
