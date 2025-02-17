@@ -75,10 +75,10 @@ export const watchOverlayAnchor: PlasmoWatchOverlayAnchor = (
   }
 }
 
-const Popup = (anchor) => {
+const Popup = () => {
   return (
     <div className="p-2 bg-white border border-gray-300 rounded shadow-lg translate-y-full">
-      <span>{anchor}</span>
+      <span>Anki</span>
     </div>
   )
 }
