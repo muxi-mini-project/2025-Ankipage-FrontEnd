@@ -1,5 +1,6 @@
 import cssText from "data-text:~style.css"
 import type { PlasmoGetOverlayAnchor, PlasmoWatchOverlayAnchor } from "plasmo"
+import Pencil from "react:~assets/pencil.svg"
 
 // load tailwind css
 export const getStyle = () => {
@@ -83,12 +84,12 @@ export const watchOverlayAnchor: PlasmoWatchOverlayAnchor = (
 
 const Popup = () => {
   return (
-    <div className="p-2 bg-white border border-gray-300 rounded shadow-lg translate-y-full">
+    <div className="translate-y-full">
       <button
         onClick={() => {
           alert(getSelectedText()?.selectedText)
         }}>
-        anki
+        <Pencil></Pencil>
       </button>
     </div>
   )
