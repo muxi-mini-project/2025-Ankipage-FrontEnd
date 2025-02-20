@@ -1,3 +1,5 @@
+import { openExtTab } from "~utils"
+
 import "./style.css"
 
 import { sendToBackground } from "@plasmohq/messaging/dist"
@@ -12,6 +14,7 @@ function IndexPopup() {
   return (
     <div className="p-4">
       <button onClick={sendMessage}>Send Message</button>
+      <button onClick={() => openExtTab("login")}>Login</button>
     </div>
   )
 }
