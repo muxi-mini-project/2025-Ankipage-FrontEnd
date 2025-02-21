@@ -14,7 +14,7 @@ function IndexPopup() {
   return (
     <div className="p-4">
       <button onClick={sendMessage}>Send Message</button>
-      <button onClick={() => openExtTab("login")}>Login</button>
+      <button onClick={() => openExtTab("welcome")}>Login</button>
     </div>
   )
 }
