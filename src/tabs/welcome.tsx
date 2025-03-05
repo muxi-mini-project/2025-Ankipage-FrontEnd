@@ -9,9 +9,9 @@ import Lock from "react:~assets/lock.svg"
 import Shield from "react:~assets/shield.svg"
 import User from "react:~assets/user.svg"
 
-import { Button } from "~components/Button"
-import { Checkbox } from "~components/Checkbox"
-import { Input } from "~components/Input"
+import { Button } from "~components/ui/Button"
+import { Checkbox } from "~components/ui/Checkbox"
+import { Input } from "~components/ui/Input"
 import { cn } from "~utils"
 
 interface TransitionProps extends ComponentProps<"div"> {
