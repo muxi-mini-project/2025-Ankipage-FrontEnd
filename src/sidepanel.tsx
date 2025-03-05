@@ -1,11 +1,22 @@
-import React from "react"
+import "./style.css"
 
-const SidePanel: React.FC = () => {
+import SearchBar from "~components/Searchbar"
+
+const SidePanel = () => {
   return (
     <div>
-      <h1>Hello, World!</h1>
+      <AnkiList></AnkiList>
     </div>
   )
 }
 
 export default SidePanel
+
+const AnkiList = () => {
+  return (
+    <div>
+      <SearchBar></SearchBar>
+      <h1>Hello, World!</h1>
+    </div>
+  )
+}
