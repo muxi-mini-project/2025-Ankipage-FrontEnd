@@ -13,28 +13,27 @@ function IndexPopup() {
     })
   }
 
+  const openSidePanel = () => {
+    // 获取当前窗口的 ID
+    chrome.windows.getCurrent({ populate: true }, (window) => {
+      // 确保 chrome.sidePanel 可用 (需要类型声明)
+      ;(chrome as any).sidePanel.open({ windowId: window.id })
+    })
+  }
+
   return (
-    <div className="p-4">
-      {/* <button onClick={sendMessage}>Send Message</button>
-			<button onClick={() => openExtTab("welcome")}>Login</button> */}
-      <AnkiModal></AnkiModal>
+    <div className="h-64 w-64 p-4">
+      <Button size="sm" onClick={sendMessage}>
+        Send Message
+      </Button>
+      <Button size="sm" onClick={() => openExtTab("welcome")}>
+        Login
+      </Button>
+      <Button size="sm" onClick={openSidePanel}>
+        Side Panel
+      </Button>
     </div>
   )
 }
 
 export default IndexPopup
-
-const AnkiModal = () => {
-  return (
-    <div className="flex size-80 flex-col items-center justify-center gap-4 rounded-[4rem] bg-gradient-to-b from-[#DDEEFF] via-[#F8FCFF] via-30% to-[#FFFFFF] px-12 py-4 font-inter shadow-lg">
-      <div className="self-start text-3xl font-bold">准 备 好</div>
-      <div className="bg-gradient-to-br from-[#024AF4] via-[#042E9D] to-[#01135D] bg-clip-text text-6xl font-bold text-transparent">
-        安&nbsp;&nbsp;&nbsp;可
-      </div>
-      <div className="self-end text-3xl font-bold">了吗？</div>
-      <Button className="w-48">
-        <span className="text-3xl font-bold">YES</span>
-      </Button>
-    </div>
-  )
-}

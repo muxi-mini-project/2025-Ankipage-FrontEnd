@@ -2,7 +2,7 @@ import Search from "react:~assets/search.svg"
 
 export default function SearchBar() {
   return (
-    <div className="bg-white p-4 font-noto-sc shadow-sm">
+    <div className="w-full bg-white p-2 font-noto-sc">
       <div className="relative mx-auto max-w-screen-xl">
         <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
