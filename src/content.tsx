@@ -1,5 +1,9 @@
 import cssText from "data-text:~style.css"
-import type { PlasmoGetOverlayAnchor, PlasmoWatchOverlayAnchor } from "plasmo"
+import type {
+  PlasmoCSConfig,
+  PlasmoGetOverlayAnchor,
+  PlasmoWatchOverlayAnchor
+} from "plasmo"
 import Pencil from "react:~assets/pencil.svg"
 
 // load tailwind css

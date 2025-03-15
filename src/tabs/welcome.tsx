@@ -1,17 +1,28 @@
+import { sendToBackground } from "@plasmohq/messaging"
+
 import "../style.css"
 
 import archive from "assets/archive.json"
 import logo from "data-base64:assets/logo.png"
 import Lottie from "lottie-react"
-import { forwardRef, useState, type ComponentProps } from "react"
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentProps
+} from "react"
 import Eye from "react:~assets/eye.svg"
 import Lock from "react:~assets/lock.svg"
 import Shield from "react:~assets/shield.svg"
 import User from "react:~assets/user.svg"
 
+import type { LoginReq, LoginRes } from "~background/messages/login"
+import type { RegisterReq, RegisterRes } from "~background/messages/register"
 import { Button } from "~components/ui/Button"
 import { Checkbox } from "~components/ui/Checkbox"
 import { Input } from "~components/ui/Input"
+import { storage } from "~storage"
 import { cn } from "~utils"
 
 interface TransitionProps extends ComponentProps<"div"> {
@@ -76,6 +87,43 @@ const Login = ({
   active: boolean
   setType?: (type: WelcomeType) => void
 }) => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [rememberPassword, setRememberPassword] = useState(false)
+
+  useEffect(() => {
+    // Load saved credentials on mount
+    storage.getSavedCredentials().then((credentials) => {
+      if (credentials) {
+        setEmail(credentials.email)
+        setPassword(credentials.password)
+        setRememberPassword(true)
+      }
+    })
+  }, [])
+
+  const login = async () => {
+    const resp = await sendToBackground<LoginReq, LoginRes>({
+      name: "login",
+      body: {
+        email: email,
+        password: password
+      }
+    })
+    if (resp.success) {
+      if (rememberPassword) {
+        await storage.saveCredentials(email, password)
+      } else {
+        await storage.clearSavedCredentials()
+      }
+      chrome.tabs.getCurrent((tab) => {
+        if (tab?.id) {
+          chrome.tabs.remove(tab.id)
+        }
+      })
+    }
+  }
+
   return (
     <Transition
       active={active}
@@ -83,21 +131,30 @@ const Login = ({
       <h1 className="text-center text-3xl font-semibold">
         Welcome to ANKIPAGE.
       </h1>
-      <Input placeholder="muxistudio@qq.com" leftIcon={User}></Input>
+      <Input
+        placeholder="邮箱"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        leftIcon={User}></Input>
       <Input
         placeholder="请输入密码"
         type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
         leftIcon={Lock}
         rightIcon={Eye}></Input>
       <div className="flex w-full items-center justify-around">
-        <Checkbox label="记住密码"></Checkbox>
+        <Checkbox
+          label="记住密码"
+          checked={rememberPassword}
+          onChange={(e) => setRememberPassword(e.target.checked)}></Checkbox>
         <span
           className="cursor-pointer text-sky-600"
           onClick={() => setType("reset")}>
           忘记密码？
         </span>
       </div>
-      <Button size="sm" className="w-48">
+      <Button size="sm" className="w-48" onClick={() => login()}>
         登录
       </Button>
       <span className="text-pretty text-gray-600">
@@ -119,6 +176,31 @@ const Register = ({
   active: boolean
   setType?: (type: WelcomeType) => void
 }) => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+
+  const register = async () => {
+    if (password !== confirmPassword) {
+      // TODO: Add proper error handling
+      alert("两次输入的密码不一致")
+      return
+    }
+
+    const resp = await sendToBackground<RegisterReq, RegisterRes>({
+      name: "register",
+      body: {
+        email: email,
+        password: password
+      }
+    })
+
+    if (resp.success) {
+      alert("注册成功")
+      setType("login")
+    }
+  }
+
   return (
     <Transition
       active={active}
@@ -136,18 +218,26 @@ const Register = ({
           </span>
         </span>
       </div>
-      <Input placeholder="muxistudio@qq.com" leftIcon={User}></Input>
+      <Input
+        placeholder="muxistudio@qq.com"
+        leftIcon={User}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}></Input>
       <Input
         placeholder="请输入密码"
         type="password"
         leftIcon={Lock}
-        rightIcon={Eye}></Input>
+        rightIcon={Eye}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}></Input>
       <Input
         placeholder="确认密码"
         type="password"
         leftIcon={Lock}
-        rightIcon={Eye}></Input>
-      <Button size="sm" className="w-48">
+        rightIcon={Eye}
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}></Input>
+      <Button size="sm" className="w-48" onClick={() => register()}>
         注册
       </Button>
     </Transition>
@@ -179,7 +269,7 @@ const Reset = ({
         </span>
       </div>
       <Input placeholder="muxistudio@qq.com" leftIcon={User}></Input>
-      <div className="grid w-full grid-cols-[3fr,2fr] gap-2 px-3">
+      <div className="grid w-[90%] grid-cols-[3fr,2fr] gap-2">
         <Input
           placeholder="请输入验证码"
           className="w-full"

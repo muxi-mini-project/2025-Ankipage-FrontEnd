@@ -53,7 +53,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "placeholder:text-muted-foreground focus-visible:ring-ring flex h-8 w-[90%] rounded-3xl border-none bg-[#EFF4FA] text-base font-semibold shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none focus-visible:ring-1 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm [&[type='password']]:[-webkit-text-security:disc]",
             !LeftIcon && !RightIcon && "px-2",
-            LeftIcon && "pl-8",
+            LeftIcon && "pl-12",
             RightIcon && "pr-8",
             className
           )}
