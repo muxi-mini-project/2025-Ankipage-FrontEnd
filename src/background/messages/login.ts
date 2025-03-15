@@ -11,6 +11,9 @@ export type LoginReq = {
 export type LoginRes = {
   success: boolean
   message: string
+  data?: {
+    userid: number
+  }
 }
 
 const handler: PlasmoMessaging.MessageHandler<LoginReq, LoginRes> = async (
@@ -25,7 +28,10 @@ const handler: PlasmoMessaging.MessageHandler<LoginReq, LoginRes> = async (
     await storage.setToken(data.token)
     res.send({
       success: true,
-      message: "login success"
+      message: "login success",
+      data: {
+        userid: data.data.userid
+      }
     })
   } else {
     res.send({

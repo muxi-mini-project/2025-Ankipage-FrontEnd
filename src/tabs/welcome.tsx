@@ -116,6 +116,9 @@ const Login = ({
       } else {
         await storage.clearSavedCredentials()
       }
+      if (resp.data?.userid) {
+        await storage.setUserId(resp.data.userid)
+      }
       chrome.tabs.getCurrent((tab) => {
         if (tab?.id) {
           chrome.tabs.remove(tab.id)

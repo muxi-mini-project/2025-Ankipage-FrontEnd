@@ -5,6 +5,7 @@ interface StorageKeys {
   savedEmail: string
   savedPassword: string
   rememberPassword: boolean
+  userid: number
 }
 
 class AppStorage {
@@ -50,6 +51,18 @@ class AppStorage {
     await this.storage.remove("savedEmail")
     await this.storage.remove("savedPassword")
     await this.storage.set("rememberPassword", false)
+  }
+
+  async getUserId(): Promise<number | null> {
+    return this.storage.get("userid")
+  }
+
+  async setUserId(userid: number): Promise<void> {
+    await this.storage.set("userid", userid)
+  }
+
+  async removeUserId(): Promise<void> {
+    await this.storage.remove("userid")
   }
 }
 
