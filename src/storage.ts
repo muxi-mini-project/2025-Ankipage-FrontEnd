@@ -6,6 +6,12 @@ interface StorageKeys {
   savedPassword: string
   rememberPassword: boolean
   userid: number
+  cachedNotes: Array<{
+    content: string
+    id: number
+    title: string
+    url: string
+  }>
 }
 
 class AppStorage {
@@ -63,6 +69,30 @@ class AppStorage {
 
   async removeUserId(): Promise<void> {
     await this.storage.remove("userid")
+  }
+
+  async getCachedNotes(): Promise<Array<{
+    content: string
+    id: number
+    title: string
+    url: string
+  }> | null> {
+    return this.storage.get("cachedNotes")
+  }
+
+  async setCachedNotes(
+    notes: Array<{
+      content: string
+      id: number
+      title: string
+      url: string
+    }>
+  ): Promise<void> {
+    await this.storage.set("cachedNotes", notes)
+  }
+
+  async clearCachedNotes(): Promise<void> {
+    await this.storage.remove("cachedNotes")
   }
 }
 

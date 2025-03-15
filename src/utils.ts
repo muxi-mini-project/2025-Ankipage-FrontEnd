@@ -1,11 +1,8 @@
-import { env } from "process"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
 import { storage } from "~storage"
 
-// const baseURL =
-//   env.NODE_ENV === "development" ? "http://8.148.26.46" : "https://plasmo.io"
 const baseURL = "http://8.148.26.46:9090"
 
 function get(path: string) {
@@ -14,6 +11,21 @@ function get(path: string) {
     credentials: "include",
     headers: {
       "Content-Type": "application/json"
+    }
+  }).then((res) => res.json())
+}
+
+async function getWithAuth(path: string) {
+  const token = await storage.getToken()
+  if (!token) {
+    throw new Error("Not authenticated")
+  }
+
+  return fetch(`${baseURL}${path}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     }
   }).then((res) => res.json())
 }
@@ -63,4 +75,13 @@ async function checkLoginState() {
   }
 }
 
-export { cn, openTab, openExtTab, checkLoginState, get, post, postWithAuth }
+export {
+  cn,
+  openTab,
+  openExtTab,
+  checkLoginState,
+  get,
+  getWithAuth,
+  post,
+  postWithAuth
+}
