@@ -1,10 +1,13 @@
 import cssText from "data-text:~style.css"
-import type {
-  PlasmoCSConfig,
-  PlasmoGetOverlayAnchor,
-  PlasmoWatchOverlayAnchor
-} from "plasmo"
+import type { PlasmoGetOverlayAnchor, PlasmoWatchOverlayAnchor } from "plasmo"
 import Pencil from "react:~assets/pencil.svg"
+
+import { sendToBackground } from "@plasmohq/messaging"
+
+import type {
+  CreateNoteReq,
+  CreateNoteRes
+} from "~background/messages/createNote"
 
 // load tailwind css
 export const getStyle = () => {
@@ -87,12 +90,56 @@ export const watchOverlayAnchor: PlasmoWatchOverlayAnchor = (
 }
 
 const Popup = () => {
+  const processText = (text: string): string => {
+    return (
+      text
+        // Normalize line breaks
+        .replace(/\r\n/g, "\n")
+        .replace(/\r/g, "\n")
+        // Replace more than two newlines with two newlines
+        .replace(/\n{3,}/g, "\n\n")
+        // Replace multiple spaces with single space (except after newline)
+        .replace(/[^\S\n]+/g, " ")
+        // Remove spaces before newlines
+        .replace(/\s+\n/g, "\n")
+        // Remove spaces after newlines
+        .replace(/\n\s+/g, "\n")
+        // Trim whitespace at start and end
+        .trim()
+    )
+  }
+
+  const uploadAnki = async () => {
+    const selected = getSelectedText()
+    if (!selected?.selectedText) {
+      alert("请先选择要保存的内容")
+      return
+    }
+
+    try {
+      const processedText = processText(selected.selectedText)
+      const resp = await sendToBackground<CreateNoteReq, CreateNoteRes>({
+        name: "createNote",
+        body: {
+          content: processedText,
+          title: document.title || "未命名",
+          url: window.location.href
+        }
+      })
+
+      if (resp.success) {
+        alert("保存成功")
+      } else {
+        alert(resp.message || "保存失败")
+      }
+    } catch (error) {
+      alert("保存失败：" + error.message)
+    }
+  }
+
   return (
     <div className="translate-y-full">
-      <button
-        onClick={() => {
-          alert(getSelectedText()?.selectedText)
-        }}>
+      <button onClick={uploadAnki}>
         <Pencil></Pencil>
       </button>
     </div>

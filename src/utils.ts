@@ -21,9 +21,24 @@ function get(path: string) {
 function post(path: string, body: Record<string, unknown>) {
   return fetch(`${baseURL}${path}`, {
     method: "POST",
-    credentials: "include",
     headers: {
       "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  }).then((res) => res.json())
+}
+
+async function postWithAuth(path: string, body: Record<string, unknown>) {
+  const token = await storage.getToken()
+  if (!token) {
+    throw new Error("Not authenticated")
+  }
+
+  return fetch(`${baseURL}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
     },
     body: JSON.stringify(body)
   }).then((res) => res.json())
@@ -48,4 +63,4 @@ async function checkLoginState() {
   }
 }
 
-export { cn, openTab, openExtTab, checkLoginState, get, post }
+export { cn, openTab, openExtTab, checkLoginState, get, post, postWithAuth }
