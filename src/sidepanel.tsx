@@ -15,11 +15,11 @@ import type {
   GetAllNotesRes
 } from "~background/messages/getAllNotes"
 import SearchBar from "~components/Searchbar"
-import { storage } from "~storage"
+import { storage, type Note } from "~storage"
 
 const SidePanel = () => {
   return (
-    <div className="h-screen w-screen bg-white p-4 font-noto-sc shadow-sm">
+    <div className="h-screen w-screen bg-white p-0 font-noto-sc shadow-sm">
       <AnkiList></AnkiList>
     </div>
   )
@@ -29,7 +29,7 @@ export default SidePanel
 
 const AnkiList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [notes, setNotes] = useState<AnkiCardData[]>([])
+  const [notes, setNotes] = useState<Note[]>([])
   const [loading, setLoading] = useState(true)
 
   const fetchNotes = async () => {
@@ -40,10 +40,7 @@ const AnkiList = () => {
       if (cachedNotes) {
         setNotes(
           cachedNotes.map((note) => ({
-            ...note,
-            createdAt: new Date().toISOString(), // Temporary date since API doesn't provide these
-            updatedAt: new Date().toISOString(),
-            userID: 1
+            ...note
           }))
         )
       }
@@ -101,10 +98,10 @@ const AnkiList = () => {
   }
 
   return (
-    <div className="flex h-full flex-col items-center">
-      <SearchBar></SearchBar>
-      <div className="h-full grow overflow-y-auto">
-        <div className="flex flex-col gap-6">
+    <div className="relative flex h-full flex-col items-center">
+      <SearchBar className="absolute z-10"></SearchBar>
+      <div className="h-full grow overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col gap-6 pt-16">
           {notes.map((card) => (
             <AnkiCard key={card.id} data={card}></AnkiCard>
           ))}
@@ -114,7 +111,7 @@ const AnkiList = () => {
           onClose={handleModalClose}
           onConfirm={() => {}}></AnkiModal>
       </div>
-      <div className="flex w-full flex-row items-center justify-around">
+      <div className="absolute bottom-2 flex w-full flex-row items-center justify-around">
         <Button
           size="sm"
           onClick={() => setIsModalOpen(true)}
@@ -133,18 +130,17 @@ const AnkiList = () => {
   )
 }
 
-interface AnkiCardData {
-  content: string
-  createdAt: string
-  id: number
-  title: string
-  updatedAt: string
-  url: string
-  userID: number
-}
+// interface AnkiCardData {
+//   content: string
+//   createdAt: string
+//   id: number
+//   title: string
+//   updatedAt: string
+//   url: string
+// }
 
 interface AnkiCardProps {
-  data?: AnkiCardData
+  data?: Note
 }
 
 const AnkiCard = ({ data }: AnkiCardProps) => {
@@ -162,37 +158,37 @@ const AnkiCard = ({ data }: AnkiCardProps) => {
     }
   }
 
-  const createdAtFormatted = formatDate(data.createdAt)
+  const createdAtFormatted = formatDate(data.createdtime)
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div className="mx-auto max-w-2xl p-2">
+      <div className="relative rounded-3xl border-[1.5px] border-gray-300 bg-white p-4 pt-0 shadow-[2px_4px_4px_0_rgba(0,0,0,0.25)]">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <File className="text-gray-600" />
-            <span className="font-medium text-gray-900">
-              {createdAtFormatted.date}
-            </span>
+        <div className="mb-2 flex flex-row gap-2">
+          <div className="left-4 mx-2 flex h-6 w-12 -translate-y-[calc(100%-1px)] items-center justify-center rounded-tl-full rounded-tr-full border-[1.5px] border-b-0 bg-white px-2">
+            <File className="relative translate-y-1/2 text-gray-600" />
           </div>
+          <span className="pt-4 text-base font-bold text-gray-900">
+            {createdAtFormatted.date}
+          </span>
           <a
             href={data.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="cursor-pointer hover:text-blue-500">
+            className="absolute right-4 top-4 cursor-pointer">
             <Globe className="h-5 w-5 text-gray-400" />
           </a>
         </div>
 
         {/* Tag */}
-        <div className="mb-4">
-          <span className="inline-block rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-500">
+        <div className="mb-2">
+          <span className="inline-block max-w-xs overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-500">
             #{data.title}
           </span>
         </div>
 
         {/* Content */}
-        <div className="mb-4 whitespace-pre-line leading-relaxed text-gray-800">
+        <div className="mb-2 line-clamp-5 max-h-48 overflow-hidden text-ellipsis whitespace-pre-line text-base leading-relaxed text-gray-800">
           {data.content}
         </div>
 

@@ -1,6 +1,6 @@
 import { Storage } from "@plasmohq/storage"
 
-interface Note {
+export interface Note {
   content: string
   createdtime: string
   updatedtime: string
