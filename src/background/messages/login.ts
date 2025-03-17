@@ -3,6 +3,15 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { storage } from "~storage"
 import { post } from "~utils"
 
+interface LoginApiResponse {
+  code: number
+  message: string
+  token: string
+  data: {
+    userid: number
+  }
+}
+
 export type LoginReq = {
   email: string
   password: string
@@ -20,7 +29,7 @@ const handler: PlasmoMessaging.MessageHandler<LoginReq, LoginRes> = async (
   req,
   res
 ) => {
-  const data = await post("/login", {
+  const data = await post<LoginApiResponse>("/login", {
     email: req.body.email,
     password: req.body.password
   })

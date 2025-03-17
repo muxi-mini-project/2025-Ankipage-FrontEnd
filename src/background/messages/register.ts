@@ -3,6 +3,12 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { storage } from "~storage"
 import { post } from "~utils"
 
+interface RegisterApiResponse {
+  code: number
+  message: string
+  token: string
+}
+
 export type RegisterReq = {
   email: string
   password: string
@@ -17,7 +23,7 @@ const handler: PlasmoMessaging.MessageHandler<
   RegisterReq,
   RegisterRes
 > = async (req, res) => {
-  const data = await post("/register", {
+  const data = await post<RegisterApiResponse>("/register", {
     email: req.body.email,
     password: req.body.password
   })
