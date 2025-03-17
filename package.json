@@ -51,7 +51,19 @@
     ],
     "permissions": [
       "tabs",
-      "scripting"
+      "scripting",
+      "sidePanel"
     ]
+  },
+  "plasmo": {
+    "entries": {
+      "sidepanel": "src/sidepanel"
+    },
+    "manifest": {
+      "action": {},
+      "side_panel": {
+        "default_path": "sidepanel.html"
+      }
+    }
   }
 }
