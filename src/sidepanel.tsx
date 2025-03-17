@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import Book from "react:~assets/book.svg"
 import File from "react:~assets/file.svg"
 import Globe from "react:~assets/globe.svg"
+import Lib from "react:~assets/lib.svg"
 import X from "react:~assets/x.svg"
 
 import { sendToBackground } from "@plasmohq/messaging"
@@ -119,7 +120,10 @@ const AnkiList = () => {
           <Book className="size-5"></Book>
           <span>ANKI</span>
         </Button>
-        <Button size="sm" className="font-extrabold">
+        <Button
+          size="sm"
+          className="grid grid-cols-[1rem,auto] gap-2 font-extrabold">
+          <Lib className="size-5"></Lib>
           LIB
         </Button>
         <Button size="sm" className="font-extrabold">
