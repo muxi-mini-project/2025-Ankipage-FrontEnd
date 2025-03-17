@@ -5,15 +5,25 @@ import { getWithAuth } from "~utils"
 
 export type GetAllNotesReq = Record<never, never>
 
+interface Note {
+  content: string
+  createdtime: string
+  updatedtime: string
+  id: number
+  title: string
+  url: string
+}
+
+interface ApiResponse {
+  code: number
+  data: Note[]
+  message: string
+}
+
 export type GetAllNotesRes = {
   success: boolean
   message: string
-  data?: Array<{
-    content: string
-    id: number
-    title: string
-    url: string
-  }>
+  data?: Note[]
 }
 
 const handler: PlasmoMessaging.MessageHandler<
@@ -30,20 +40,25 @@ const handler: PlasmoMessaging.MessageHandler<
       return
     }
 
-    const data = await getWithAuth(`/getallnotes/${userId}`)
-    if (data.code === 0) {
+    const response = await getWithAuth<ApiResponse>(`/getallnotes/${userId}`)
+    if (response.code === 0) {
       // Cache the notes in storage
-      await storage.setCachedNotes(data.data)
+      await storage.setCachedNotes(response.data)
 
       res.send({
         success: true,
         message: "Notes retrieved successfully",
-        data: data.data
+        data: response.data.map((note) => ({
+          ...note,
+          // Ensure dates are properly formatted ISO strings
+          createdtime: new Date(note.createdtime).toISOString(),
+          updatedtime: new Date(note.updatedtime).toISOString()
+        }))
       })
     } else {
       res.send({
         success: false,
-        message: data.message
+        message: response.message
       })
     }
   } catch (error) {

@@ -15,7 +15,7 @@ function get(path: string) {
   }).then((res) => res.json())
 }
 
-async function getWithAuth(path: string) {
+async function getWithAuth<T>(path: string): Promise<T> {
   const token = await storage.getToken()
   if (!token) {
     throw new Error("Not authenticated")
@@ -30,7 +30,10 @@ async function getWithAuth(path: string) {
   }).then((res) => res.json())
 }
 
-function post(path: string, body: Record<string, unknown>) {
+async function post<T>(
+  path: string,
+  body: Record<string, unknown>
+): Promise<T> {
   return fetch(`${baseURL}${path}`, {
     method: "POST",
     headers: {
@@ -40,7 +43,10 @@ function post(path: string, body: Record<string, unknown>) {
   }).then((res) => res.json())
 }
 
-async function postWithAuth(path: string, body: Record<string, unknown>) {
+async function postWithAuth<T>(
+  path: string,
+  body: Record<string, unknown>
+): Promise<T> {
   const token = await storage.getToken()
   if (!token) {
     throw new Error("Not authenticated")

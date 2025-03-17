@@ -1,17 +1,21 @@
 import { Storage } from "@plasmohq/storage"
 
+interface Note {
+  content: string
+  createdtime: string
+  updatedtime: string
+  id: number
+  title: string
+  url: string
+}
+
 interface StorageKeys {
   token: string
   savedEmail: string
   savedPassword: string
   rememberPassword: boolean
   userid: number
-  cachedNotes: Array<{
-    content: string
-    id: number
-    title: string
-    url: string
-  }>
+  cachedNotes: Note[]
 }
 
 class AppStorage {
@@ -71,23 +75,11 @@ class AppStorage {
     await this.storage.remove("userid")
   }
 
-  async getCachedNotes(): Promise<Array<{
-    content: string
-    id: number
-    title: string
-    url: string
-  }> | null> {
+  async getCachedNotes(): Promise<Note[] | null> {
     return this.storage.get("cachedNotes")
   }
 
-  async setCachedNotes(
-    notes: Array<{
-      content: string
-      id: number
-      title: string
-      url: string
-    }>
-  ): Promise<void> {
+  async setCachedNotes(notes: Note[]): Promise<void> {
     await this.storage.set("cachedNotes", notes)
   }
 
