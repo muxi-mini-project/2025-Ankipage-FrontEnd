@@ -3,6 +3,7 @@ import { Button } from "~components/ui/Button"
 import "./style.css"
 
 import { useEffect, useState } from "react"
+import Book from "react:~assets/book.svg"
 import File from "react:~assets/file.svg"
 import Globe from "react:~assets/globe.svg"
 import X from "react:~assets/x.svg"
@@ -114,9 +115,19 @@ const AnkiList = () => {
           onConfirm={() => {}}></AnkiModal>
       </div>
       <div className="flex w-full flex-row items-center justify-around">
-        <Button onClick={() => setIsModalOpen(true)}>ANKI</Button>
-        <Button>LIB</Button>
-        <Button>MORE</Button>
+        <Button
+          size="sm"
+          onClick={() => setIsModalOpen(true)}
+          className="grid grid-cols-[1rem,auto] gap-2 font-extrabold">
+          <Book className="size-5"></Book>
+          <span>ANKI</span>
+        </Button>
+        <Button size="sm" className="font-extrabold">
+          LIB
+        </Button>
+        <Button size="sm" className="font-extrabold">
+          MORE
+        </Button>
       </div>
     </div>
   )
