@@ -19,7 +19,7 @@ import type {
 import SearchBar from "~components/Searchbar"
 import { storage } from "~storage"
 import type { Note } from "~types"
-import { formatDate } from "~utils"
+import { formatDate, openExtTab } from "~utils"
 
 const SidePanel = () => {
   return (
@@ -125,6 +125,7 @@ const AnkiList = () => {
         </Button>
         <Button
           size="sm"
+          onClick={() => openExtTab("library")}
           className="grid grid-cols-[1rem,auto] gap-2 font-extrabold">
           <Lib className="size-5"></Lib>
           LIB
