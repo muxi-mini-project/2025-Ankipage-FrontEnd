@@ -7,6 +7,7 @@ import Book from "react:~assets/book.svg"
 import File from "react:~assets/file.svg"
 import Globe from "react:~assets/globe.svg"
 import Lib from "react:~assets/lib.svg"
+import More from "react:~assets/more.svg"
 import X from "react:~assets/x.svg"
 
 import { sendToBackground } from "@plasmohq/messaging"
@@ -127,21 +128,12 @@ const AnkiList = () => {
           LIB
         </Button>
         <Button size="sm" className="font-extrabold">
-          MORE
+          <More className="size-5"></More>
         </Button>
       </div>
     </div>
   )
 }
-
-// interface AnkiCardData {
-//   content: string
-//   createdAt: string
-//   id: number
-//   title: string
-//   updatedAt: string
-//   url: string
-// }
 
 interface AnkiCardProps {
   data?: Note
