@@ -75,22 +75,6 @@ const AnkiList = () => {
     fetchNotes()
   }, [])
 
-  // Refresh notes when sidebar gains focus
-  useEffect(() => {
-    const handleFocus = () => {
-      console.log("Sidebar focused, refreshing notes...")
-      fetchNotes()
-    }
-
-    // Add focus event listener
-    window.addEventListener("focus", handleFocus)
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("focus", handleFocus)
-    }
-  }, [])
-
   const handleModalClose = () => {
     setIsModalOpen(false)
   }

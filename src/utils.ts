@@ -62,6 +62,21 @@ async function postWithAuth<T>(
   }).then((res) => res.json())
 }
 
+async function deleteWithAuth<T>(path: string): Promise<T> {
+  const token = await storage.getToken()
+  if (!token) {
+    throw new Error("Not authenticated")
+  }
+
+  return fetch(`${baseURL}${path}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  }).then((res) => res.json())
+}
+
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -104,7 +119,6 @@ function formatDate(dateStr: string) {
     })
   }
 }
-
 export {
   formatDate,
   cn,
@@ -114,5 +128,6 @@ export {
   getWithAuth,
   post,
   postWithAuth,
+  deleteWithAuth,
   processBlank
 }

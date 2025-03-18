@@ -12,6 +12,10 @@ import Trash from "react:~assets/trash.svg"
 import { sendToBackground } from "@plasmohq/messaging"
 
 import type {
+  DeleteNoteReq,
+  DeleteNoteRes
+} from "~background/messages/deleteNote"
+import type {
   GetAllNotesReq,
   GetAllNotesRes
 } from "~background/messages/getAllNotes"
@@ -47,6 +51,25 @@ const Library = () => {
       console.error("Error fetching notes:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("确定要删除这条笔记吗？")) {
+      return
+    }
+
+    try {
+      const response = await sendToBackground<DeleteNoteReq, DeleteNoteRes>({
+        name: "deleteNote",
+        body: { id }
+      })
+
+      if (response.success) {
+        await fetchNotes() // Refresh notes after successful deletion
+      }
+    } catch (error) {
+      console.error("Error deleting note:", error)
     }
   }
 
@@ -127,7 +150,7 @@ const Library = () => {
                       </td>
                       <td className="px-4 py-3 text-center">
                         <button
-                          onClick={() => {}}
+                          onClick={() => handleDelete(note.id)}
                           className="text-gray-400 transition-colors hover:text-gray-600">
                           <Trash className="h-5 w-5" />
                         </button>
