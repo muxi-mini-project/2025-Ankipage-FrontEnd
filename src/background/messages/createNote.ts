@@ -1,17 +1,8 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { storage } from "~storage"
+import type { APIResponse } from "~types"
 import { postWithAuth } from "~utils"
-
-interface CreateNoteApiResponse {
-  code: number
-  message: string
-  data: {
-    content: string
-    title: string
-    url: string
-  }
-}
 
 export type CreateNoteReq = {
   content: string
@@ -43,14 +34,17 @@ const handler: PlasmoMessaging.MessageHandler<
       return
     }
 
-    const data = await postWithAuth<CreateNoteApiResponse>(
-      `/createnote/${userId}`,
-      {
-        content: req.body.content,
-        title: req.body.title,
-        url: req.body.url
-      }
-    )
+    const data = await postWithAuth<
+      APIResponse<{
+        content: string
+        title: string
+        url: string
+      }>
+    >(`/createnote/${userId}`, {
+      content: req.body.content,
+      title: req.body.title,
+      url: req.body.url
+    })
     if (data.code === 0) {
       res.send({
         success: true,

@@ -74,20 +74,45 @@ function openExtTab(id: string) {
   openTab(`./tabs/${id}.html`)
 }
 
-async function checkLoginState() {
-  const token = await storage.getToken()
-  if (!token) {
-    openExtTab("welcome")
+function processBlank(text: string): string {
+  return (
+    text
+      // Normalize line breaks
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      // Replace more than two newlines with two newlines
+      .replace(/\n{3,}/g, "\n\n")
+      // Replace multiple spaces with single space (except after newline)
+      .replace(/[^\S\n]+/g, " ")
+      // Remove spaces before newlines
+      .replace(/\s+\n/g, "\n")
+      // Remove spaces after newlines
+      .replace(/\n\s+/g, "\n")
+      // Trim whitespace at start and end
+      .trim()
+  )
+}
+
+function formatDate(dateStr: string) {
+  const date = new Date(dateStr)
+  return {
+    date: date.toLocaleDateString("zh-CN"),
+    time: date.toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    })
   }
 }
 
 export {
+  formatDate,
   cn,
   openTab,
   openExtTab,
-  checkLoginState,
   get,
   getWithAuth,
   post,
-  postWithAuth
+  postWithAuth,
+  processBlank
 }

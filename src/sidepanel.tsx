@@ -17,7 +17,9 @@ import type {
   GetAllNotesRes
 } from "~background/messages/getAllNotes"
 import SearchBar from "~components/Searchbar"
-import { storage, type Note } from "~storage"
+import { storage } from "~storage"
+import type { Note } from "~types"
+import { formatDate } from "~utils"
 
 const SidePanel = () => {
   return (
@@ -135,24 +137,8 @@ const AnkiList = () => {
   )
 }
 
-interface AnkiCardProps {
-  data?: Note
-}
-
-const AnkiCard = ({ data }: AnkiCardProps) => {
+const AnkiCard = ({ data }: { data?: Note }) => {
   if (!data) return null
-
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return {
-      date: date.toLocaleDateString("zh-CN"),
-      time: date.toLocaleTimeString("zh-CN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      })
-    }
-  }
 
   const createdAtFormatted = formatDate(data.createdtime)
 

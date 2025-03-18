@@ -1,13 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-import { storage } from "~storage"
+import type { APIResponse } from "~types"
 import { post } from "~utils"
-
-interface RegisterApiResponse {
-  code: number
-  message: string
-  token: string
-}
 
 export type RegisterReq = {
   email: string
@@ -23,15 +17,17 @@ const handler: PlasmoMessaging.MessageHandler<
   RegisterReq,
   RegisterRes
 > = async (req, res) => {
-  const data = await post<RegisterApiResponse>("/register", {
-    email: req.body.email,
-    password: req.body.password
-  })
+  const data = await post<APIResponse<{ email: string; userId: string }>>(
+    "/register",
+    {
+      email: req.body.email,
+      password: req.body.password
+    }
+  )
   if (data.code === 0) {
-    await storage.setToken(data.token)
     res.send({
       success: true,
-      message: "login success"
+      message: "register success"
     })
   } else {
     res.send({

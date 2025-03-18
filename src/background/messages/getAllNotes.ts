@@ -1,24 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { storage } from "~storage"
+import type { APIResponse, Note } from "~types"
 import { getWithAuth } from "~utils"
 
 export type GetAllNotesReq = Record<never, never>
-
-interface Note {
-  content: string
-  createdtime: string
-  updatedtime: string
-  id: number
-  title: string
-  url: string
-}
-
-interface ApiResponse {
-  code: number
-  data: Note[]
-  message: string
-}
 
 export type GetAllNotesRes = {
   success: boolean
@@ -40,7 +26,9 @@ const handler: PlasmoMessaging.MessageHandler<
       return
     }
 
-    const response = await getWithAuth<ApiResponse>(`/getallnotes/${userId}`)
+    const response = await getWithAuth<APIResponse<Note[]>>(
+      `/getallnotes/${userId}`
+    )
     if (response.code === 0) {
       // Cache the notes in storage
       await storage.setCachedNotes(response.data)
