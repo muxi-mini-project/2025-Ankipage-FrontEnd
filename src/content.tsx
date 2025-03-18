@@ -8,6 +8,7 @@ import type {
   CreateNoteReq,
   CreateNoteRes
 } from "~background/messages/createNote"
+import { processBlank } from "~utils"
 
 // load tailwind css
 export const getStyle = () => {
@@ -90,25 +91,6 @@ export const watchOverlayAnchor: PlasmoWatchOverlayAnchor = (
 }
 
 const Popup = () => {
-  const processText = (text: string): string => {
-    return (
-      text
-        // Normalize line breaks
-        .replace(/\r\n/g, "\n")
-        .replace(/\r/g, "\n")
-        // Replace more than two newlines with two newlines
-        .replace(/\n{3,}/g, "\n\n")
-        // Replace multiple spaces with single space (except after newline)
-        .replace(/[^\S\n]+/g, " ")
-        // Remove spaces before newlines
-        .replace(/\s+\n/g, "\n")
-        // Remove spaces after newlines
-        .replace(/\n\s+/g, "\n")
-        // Trim whitespace at start and end
-        .trim()
-    )
-  }
-
   const uploadAnki = async () => {
     const selected = getSelectedText()
     if (!selected?.selectedText) {
@@ -117,7 +99,7 @@ const Popup = () => {
     }
 
     try {
-      const processedText = processText(selected.selectedText)
+      const processedText = processBlank(selected.selectedText)
       const resp = await sendToBackground<CreateNoteReq, CreateNoteRes>({
         name: "createNote",
         body: {

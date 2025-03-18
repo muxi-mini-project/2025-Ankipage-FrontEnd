@@ -2,16 +2,28 @@ import { Button } from "~components/ui/Button"
 
 import "./style.css"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import Book from "react:~assets/book.svg"
 import File from "react:~assets/file.svg"
 import Globe from "react:~assets/globe.svg"
+import Lib from "react:~assets/lib.svg"
+import More from "react:~assets/more.svg"
 import X from "react:~assets/x.svg"
 
+import { sendToBackground } from "@plasmohq/messaging"
+
+import type {
+  GetAllNotesReq,
+  GetAllNotesRes
+} from "~background/messages/getAllNotes"
 import SearchBar from "~components/Searchbar"
+import { storage } from "~storage"
+import type { Note } from "~types"
+import { formatDate, openExtTab } from "~utils"
 
 const SidePanel = () => {
   return (
-    <div className="h-screen w-screen bg-white p-4 font-noto-sc shadow-sm">
+    <div className="h-screen w-screen bg-white p-0 font-noto-sc shadow-sm">
       <AnkiList></AnkiList>
     </div>
   )
@@ -21,101 +33,64 @@ export default SidePanel
 
 const AnkiList = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [notes, setNotes] = useState<Note[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const fetchNotes = async () => {
+    try {
+      setLoading(true)
+      // Try to get cached notes first
+      const cachedNotes = await storage.getCachedNotes()
+      if (cachedNotes) {
+        setNotes(
+          cachedNotes.map((note) => ({
+            ...note
+          }))
+        )
+      }
+
+      // Fetch fresh notes
+      const response = await sendToBackground<GetAllNotesReq, GetAllNotesRes>({
+        name: "getAllNotes"
+      })
+
+      if (response.success && response.data) {
+        const notesWithDates = response.data.map((note) => ({
+          ...note,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          userID: 1
+        }))
+        setNotes(notesWithDates)
+      }
+    } catch (error) {
+      console.error("Error fetching notes:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Initial fetch
+  useEffect(() => {
+    fetchNotes()
+  }, [])
 
   const handleModalClose = () => {
     setIsModalOpen(false)
   }
 
-  // Mock data array
-  const mockCards: AnkiCardData[] = [
-    {
-      content:
-        "由于《莱茵报》被查封，马克思感到自己又一次成了失业的知识分子。\n青年黑格尔派在《莱茵报》上本已明显表现出来的分歧进一步发展到彻底的分裂的程度。\n那些在柏林受布鲁诺鲍威尔领导的青年黑格尔派分子，越来越倾向于与政治运动相脱离。",
-      createdAt: "2025-01-02T16:06:39Z",
-      id: 1,
-      title: "马克思青年时代",
-      updatedAt: "2025-01-02T16:06:39Z",
-      url: "https://example.com/marx",
-      userID: 1
-    },
-    {
-      content:
-        "JavaScript 中的 Promise 是一种用于处理异步操作的对象。它代表了一个可能现在、或者未来才可用的值。\n\nPromise 有三种状态：\n- pending（进行中）\n- fulfilled（已成功）\n- rejected（已失败）",
-      createdAt: "2025-01-03T09:15:00Z",
-      id: 2,
-      title: "Promise基础",
-      updatedAt: "2025-01-03T09:15:00Z",
-      url: "https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise",
-      userID: 1
-    },
-    {
-      content:
-        "React Hooks 是 React 16.8 中新增的特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。\n\n最常用的 Hooks：\n- useState\n- useEffect\n- useContext",
-      createdAt: "2025-01-04T14:30:00Z",
-      id: 3,
-      title: "React Hooks",
-      updatedAt: "2025-01-04T14:30:00Z",
-      url: "https://react.dev/reference/react",
-      userID: 1
-    },
-    {
-      content:
-        "Git 是一个分布式版本控制系统，用于跟踪文件的更改。\n\n基本命令：\n- git add：添加文件到暂存区\n- git commit：提交更改\n- git push：推送到远程仓库",
-      createdAt: "2025-01-05T11:20:00Z",
-      id: 4,
-      title: "Git基础命令",
-      updatedAt: "2025-01-05T11:20:00Z",
-      url: "https://git-scm.com/doc",
-      userID: 1
-    },
-    {
-      content:
-        "设计模式中的观察者模式（Observer Pattern）是一种行为型设计模式。\n\n核心组成：\n- Subject（主题）：维护观察者列表，提供注册和通知机制\n- Observer（观察者）：定义更新接口，收到通知时更新\n- ConcreteSubject：具体主题\n- ConcreteObserver：具体观察者",
-      createdAt: "2025-01-06T13:45:00Z",
-      id: 5,
-      title: "观察者模式",
-      updatedAt: "2025-01-06T13:45:00Z",
-      url: "https://refactoring.guru/design-patterns/observer",
-      userID: 1
-    },
-    {
-      content:
-        "TCP/IP 协议是互联网的基础协议，采用四层结构：\n\n1. 应用层：HTTP、FTP、SMTP等\n2. 传输层：TCP、UDP\n3. 网络层：IP\n4. 网络接口层：负责硬件接口",
-      createdAt: "2025-01-07T10:30:00Z",
-      id: 6,
-      title: "网络协议层次",
-      updatedAt: "2025-01-07T10:30:00Z",
-      url: "https://www.rfc-editor.org/rfc/rfc1180",
-      userID: 1
-    },
-    {
-      content:
-        "Docker容器化技术的核心概念：\n\n- 镜像（Image）：只读模板，用于创建容器\n- 容器（Container）：镜像的运行实例\n- Dockerfile：用于构建镜像的脚本\n- Docker Compose：用于定义和运行多容器应用",
-      createdAt: "2025-01-08T15:20:00Z",
-      id: 7,
-      title: "Docker基础",
-      updatedAt: "2025-01-08T15:20:00Z",
-      url: "https://docs.docker.com/get-started/",
-      userID: 1
-    },
-    {
-      content:
-        "Python中的装饰器是一种修改或增强函数功能的方式，无需直接修改函数的源代码。\n\n装饰器的常见用途：\n- 日志记录\n- 访问控制\n- 性能测量\n- 缓存",
-      createdAt: "2025-01-09T16:40:00Z",
-      id: 8,
-      title: "Python装饰器",
-      updatedAt: "2025-01-09T16:40:00Z",
-      url: "https://docs.python.org/3/glossary.html#term-decorator",
-      userID: 1
-    }
-  ]
+  if (loading) {
+    return (
+      <div className="flex h-full items-center justify-center">Loading...</div>
+    )
+  }
 
   return (
-    <div className="flex h-full flex-col items-center">
-      <SearchBar></SearchBar>
-      <div className="h-full grow overflow-y-auto">
-        <div className="flex flex-col gap-6">
-          {mockCards.map((card) => (
+    <div className="relative flex h-full flex-col items-center">
+      <SearchBar className="absolute z-10"></SearchBar>
+      <div className="h-full grow overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col gap-6 pt-16">
+          {notes.map((card) => (
             <AnkiCard key={card.id} data={card}></AnkiCard>
           ))}
         </div>
@@ -124,75 +99,63 @@ const AnkiList = () => {
           onClose={handleModalClose}
           onConfirm={() => {}}></AnkiModal>
       </div>
-      <div className="flex w-full flex-row items-center justify-around">
-        <Button onClick={() => setIsModalOpen(true)}>ANKI</Button>
-        <Button>LIB</Button>
-        <Button>MORE</Button>
+      <div className="absolute bottom-2 flex w-full flex-row items-center justify-around">
+        <Button
+          size="sm"
+          onClick={() => setIsModalOpen(true)}
+          className="grid grid-cols-[1rem,auto] gap-2 font-extrabold">
+          <Book className="size-5"></Book>
+          <span>ANKI</span>
+        </Button>
+        <Button
+          size="sm"
+          onClick={() => openExtTab("library")}
+          className="grid grid-cols-[1rem,auto] gap-2 font-extrabold">
+          <Lib className="size-5"></Lib>
+          LIB
+        </Button>
+        <Button size="sm" className="font-extrabold">
+          <More className="size-5"></More>
+        </Button>
       </div>
     </div>
   )
 }
 
-interface AnkiCardData {
-  content: string
-  createdAt: string
-  id: number
-  title: string
-  updatedAt: string
-  url: string
-  userID: number
-}
-
-interface AnkiCardProps {
-  data?: AnkiCardData
-}
-
-const AnkiCard = ({ data }: AnkiCardProps) => {
+const AnkiCard = ({ data }: { data?: Note }) => {
   if (!data) return null
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return {
-      date: date.toLocaleDateString("zh-CN"),
-      time: date.toLocaleTimeString("zh-CN", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      })
-    }
-  }
-
-  const createdAtFormatted = formatDate(data.createdAt)
+  const createdAtFormatted = formatDate(data.createdtime)
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+    <div className="mx-auto max-w-2xl p-2">
+      <div className="relative rounded-3xl border-[1.5px] border-gray-300 bg-white p-4 pt-0 shadow-[2px_4px_4px_0_rgba(0,0,0,0.25)]">
         {/* Header */}
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <File className="text-gray-600" />
-            <span className="font-medium text-gray-900">
-              {createdAtFormatted.date}
-            </span>
+        <div className="mb-2 flex flex-row gap-2">
+          <div className="left-4 mx-2 flex h-6 w-12 -translate-y-[calc(100%-1px)] items-center justify-center rounded-tl-full rounded-tr-full border-[1.5px] border-b-0 bg-white px-2">
+            <File className="relative translate-y-1/2 text-gray-600" />
           </div>
+          <span className="pt-4 text-base font-bold text-gray-900">
+            {createdAtFormatted.date}
+          </span>
           <a
             href={data.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="cursor-pointer hover:text-blue-500">
+            className="absolute right-4 top-4 cursor-pointer">
             <Globe className="h-5 w-5 text-gray-400" />
           </a>
         </div>
 
         {/* Tag */}
-        <div className="mb-4">
-          <span className="inline-block rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-500">
+        <div className="mb-2">
+          <span className="inline-block max-w-xs overflow-hidden text-ellipsis whitespace-nowrap rounded-md bg-blue-100 px-2 py-1 text-sm text-blue-500">
             #{data.title}
           </span>
         </div>
 
         {/* Content */}
-        <div className="mb-4 whitespace-pre-line leading-relaxed text-gray-800">
+        <div className="mb-2 line-clamp-5 max-h-48 overflow-hidden text-ellipsis whitespace-pre-line text-base leading-relaxed text-gray-800">
           {data.content}
         </div>
 

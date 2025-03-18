@@ -14,10 +14,10 @@ function IndexPopup() {
   }
 
   const openSidePanel = () => {
-    // 获取当前窗口的 ID
-    chrome.windows.getCurrent({ populate: true }, (window) => {
-      // 确保 chrome.sidePanel 可用 (需要类型声明)
-      ;(chrome as any).sidePanel.open({ windowId: window.id })
+    chrome.action.onClicked.addListener((tab) => {
+      chrome.sidePanel.open({
+        windowId: tab.windowId
+      })
     })
   }
 
