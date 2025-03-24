@@ -5,13 +5,7 @@ import "../style.css"
 import archive from "assets/archive.json"
 import logo from "data-base64:assets/logo.png"
 import Lottie from "lottie-react"
-import {
-  forwardRef,
-  useEffect,
-  useRef,
-  useState,
-  type ComponentProps
-} from "react"
+import { forwardRef, useEffect, useState, type ComponentProps } from "react"
 import Eye from "react:~assets/eye.svg"
 import Lock from "react:~assets/lock.svg"
 import Shield from "react:~assets/shield.svg"

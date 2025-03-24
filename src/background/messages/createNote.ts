@@ -1,6 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 import { storage } from "~storage"
+import type { APIResponse } from "~types"
 import { postWithAuth } from "~utils"
 
 export type CreateNoteReq = {
@@ -33,7 +34,13 @@ const handler: PlasmoMessaging.MessageHandler<
       return
     }
 
-    const data = await postWithAuth(`/createnote/${userId}`, {
+    const data = await postWithAuth<
+      APIResponse<{
+        content: string
+        title: string
+        url: string
+      }>
+    >(`/createnote/${userId}`, {
       content: req.body.content,
       title: req.body.title,
       url: req.body.url
